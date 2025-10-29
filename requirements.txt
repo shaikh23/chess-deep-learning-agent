@@ -1,0 +1,36 @@
+# Chess Deep Learning Agent - Requirements
+# Optimized for MacBook with MPS (Metal Performance Shaders)
+
+# Deep Learning
+torch==2.2.0
+torchvision==0.17.0
+torchaudio==2.2.0
+
+# Chess
+python-chess==1.999
+
+# Data Processing
+numpy==1.26.4
+pandas==2.2.0
+
+# Visualization
+matplotlib==3.8.3
+seaborn==0.13.2
+
+# Progress and CLI
+tqdm==4.66.2
+rich==13.7.0
+
+# Jupyter
+jupyter==1.0.0
+notebook==7.1.0
+ipywidgets==8.1.2
+
+# Scientific
+scipy==1.12.0
+
+# Note: For Mac with Apple Silicon (M1/M2/M3), PyTorch with MPS support
+# is included. To verify MPS availability, run:
+#   python -c "import torch; print(torch.backends.mps.is_available())"
+#
+# If using Intel Mac, CPU backend will be used automatically.

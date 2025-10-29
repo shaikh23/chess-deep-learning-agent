@@ -1,0 +1,81 @@
+# Training and Evaluation Configuration Presets
+# Usage: Load with Python's yaml module or reference in notebooks
+
+# =============================================================================
+# FULL MODE: Production-quality training for strong agent
+# =============================================================================
+full:
+  # Data Sampling
+  data:
+    target_positions: 1000000
+    shard_size: 50000
+    min_elo: 2000
+    min_moves: 20
+    min_time_control: 300  # 5 minutes
+    skip_first_plies: 8
+    balance_sides: true
+
+  # Model Architecture
+  model:
+    type: "miniresnet"
+    num_blocks: 6
+    channels: 64
+    dropout: 0.1
+
+  # Training
+  training:
+    batch_size: 256
+    num_epochs: 10
+    learning_rate: 0.001
+    weight_decay: 0.0001
+    warmup_epochs: 2
+    value_weight: 0.35
+    policy_smoothing: 0.05
+
+  # Search Configuration
+  search:
+    movetime: 0.3
+    max_depth: 3
+    enable_quiescence: true
+    use_killer_moves: true
+    use_history_heuristic: true
+
+  # Opening Book
+  opening_book:
+    max_plies: 8
+
+  # Benchmarking
+  benchmark:
+    games_per_opponent: 100
+    movetime: 0.3
+
+# =============================================================================
+# FAST MODE: Quick iterations for development
+# =============================================================================
+fast:
+  data:
+    target_positions: 250000
+    shard_size: 25000
+    min_elo: 2000
+    min_moves: 15
+    skip_first_plies: 6
+
+  model:
+    num_blocks: 4
+    channels: 48
+
+  training:
+    batch_size: 128
+    num_epochs: 5
+    warmup_epochs: 1
+
+  search:
+    movetime: 0.1
+    max_depth: 2
+
+  opening_book:
+    max_plies: 6
+
+  benchmark:
+    games_per_opponent: 20
+    movetime: 0.1
