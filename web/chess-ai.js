@@ -15,15 +15,20 @@ class ChessAI {
     }
 
     async init() {
-        this.setupBoard();
-        this.setupControls();
-        await this.loadModel();
-        this.updateStatus('Ready to play! Make your move.');
-        this.updateTurnIndicator();
+        try {
+            this.setupBoard();
+            this.setupControls();
+            await this.loadModel();
+            this.updateStatus('Ready to play! Make your move.');
+            this.updateTurnIndicator();
 
-        // If player is black, AI moves first
-        if (this.playerColor === 'black') {
-            setTimeout(() => this.makeAIMove(), 500);
+            // If player is black, AI moves first
+            if (this.playerColor === 'black') {
+                setTimeout(() => this.makeAIMove(), 500);
+            }
+        } catch (error) {
+            console.error('Initialization error:', error);
+            this.updateStatus('Failed to initialize: ' + error.message);
         }
     }
 
@@ -89,9 +94,13 @@ class ChessAI {
             console.log('Input names:', this.session.inputNames);
             console.log('Output names:', this.session.outputNames);
 
+            // Update status to indicate model is ready
+            this.updateStatus('Model loaded! Ready to play.');
+
         } catch (error) {
             console.error('Error loading model:', error);
-            this.updateStatus('Error loading model. Please check console.');
+            this.updateStatus('Error loading model: ' + error.message);
+            throw error; // Re-throw to prevent game from starting
         }
     }
 
@@ -220,6 +229,11 @@ class ChessAI {
     }
 
     async getAIMove() {
+        // Check if model is loaded
+        if (!this.session) {
+            throw new Error('Model not loaded yet');
+        }
+
         // Encode board position
         const boardTensor = this.encodeBoard();
         const legalMask = this.getLegalMovesMask();
