@@ -1,3 +1,6 @@
+## Current status: 
+Creating an app where you can play against the model. Will deploy via Vercel. Using Claude for assistance and refining my code where necessary. 
+
 # Chess Deep Learning Agent
 
 A PyTorch-based chess playing agent using policy and value networks with lightweight search (alpha-beta pruning or MCTS). Trained via supervised learning from Lichess games and benchmarked against existing engines.
@@ -17,86 +20,9 @@ A PyTorch-based chess playing agent using policy and value networks with lightwe
 
 ---
 
-## Project Structure
-
-```
-chess-dl-agent/
-├── README.md                          # This file
-├── PROJECT_SUMMARY.md                 # High-level project overview
-├── requirements.txt                   # Python dependencies
-├── environment.yml                    # Conda environment
-├── verify_setup.py                    # Setup verification script
-│
-├── docs/                              # Documentation
-│   ├── README.md                      # Documentation index
-│   ├── SETUP_GUIDE.md                 # Complete setup instructions
-│   ├── QUICKSTART.md                  # Quick start guide
-│   ├── TROUBLESHOOTING.md             # Common issues and solutions
-│   ├── USE_YOUR_DATA.md               # Custom dataset guide
-│   └── archived/                      # Historical documentation
-│
-├── presentation/                      # Presentation materials
-│   ├── Chess_AI_Presentation.pptx     # PowerPoint slides
-│   ├── PRESENTATION_SCRIPT.md         # Speaking notes and script
-│   ├── VIDEO_SCRIPT.md                # Video demo outline
-│   └── create_presentation.py         # Presentation generation script
-│
-├── notebooks/                         # Jupyter notebooks (run in order)
-│   ├── 01_eda_and_preprocessing.ipynb # Data exploration and preparation
-│   ├── 02_train_supervised.ipynb      # Model training
-│   ├── 03_search_and_play.ipynb       # Search algorithms and gameplay
-│   ├── 04_benchmarks_and_analysis.ipynb # Match evaluation
-│   └── 00_report_submission.ipynb     # Final comprehensive report
-│
-├── src/                               # Source code
-│   ├── data/                          # PGN parsing, dataset, sampling
-│   ├── model/                         # Neural network architectures and loss
-│   ├── search/                        # Alpha-beta and MCTS implementations
-│   ├── play/                          # Engine wrappers and match runner
-│   └── utils/                         # Encoding, metrics, plotting, seeds
-│
-├── config/                            # Configuration files
-│   ├── engines.py                     # Engine paths and settings
-│   ├── presets.yaml                   # Training presets
-│   └── run_maia_benchmark.sh          # Benchmark script
-│
-├── artifacts/                         # Generated outputs
-│   ├── weights/                       # Saved model checkpoints
-│   ├── data/                          # Processed training data
-│   ├── logs/                          # Training logs (JSON)
-│   ├── matches/                       # PGN game records
-│   └── maia-1500.pb.gz                # Maia neural network weights
-│
-├── reports/                           # Analysis outputs
-│   ├── figures/                       # Plots and visualizations
-│   └── final/                         # Final report PDFs
-│
-├── backups/                           # Data backups
-│   ├── shards_backup.tar.gz           # Training data backup
-│   └── src_code.tar.gz                # Source code archive
-│
-└── data/
-    └── raw/                           # Raw Lichess PGN files
-```
-
----
-
-## Requirements
-
-### Hardware
-- **Recommended**: MacBook with Apple Silicon (M1/M2/M3) for MPS acceleration
-- **Minimum**: Any modern CPU (training will be slower)
-
-### Software
-- Python 3.11+
-- PyTorch 2.2+ (with MPS support on Mac)
-- Stockfish (optional, for ACPL analysis and benchmarking)
-
----
-
 ## Installation
 
-### Option 1: pip (Recommended for Mac)
+### pip 
 
 ```bash
 # Clone or download the repository
@@ -110,25 +36,14 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### Option 2: Conda
 
-```bash
-# Create conda environment
-conda env create -f environment.yml
-conda activate chess-dl-agent
-```
-
-### Install Engines (Optional but Recommended for Benchmarking)
+### Install Engines
 
 #### Stockfish
 ```bash
 # macOS (Homebrew)
 brew install stockfish
 
-# Linux (Debian/Ubuntu)
-sudo apt-get install stockfish
-
-# Or download from: https://stockfishchess.org/download/
 ```
 
 #### Lc0 (for Maia)
@@ -136,47 +51,20 @@ sudo apt-get install stockfish
 # macOS (Homebrew)
 brew install lc0
 
-# Linux: Download from https://github.com/LeelaChessZero/lc0/releases
 ```
 
 #### Maia Weights
 Download human-like neural network weights from [https://maiachess.com/](https://maiachess.com/)
-- Available rating levels: 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900
-- Download `.pb.gz` files (e.g., `maia1500.pb.gz`) to `weights/` directory
-
-**Your Installation:**
-- ✓ Lc0: `/usr/local/bin/lc0`
-- ✓ Maia-1500: `weights/maia-1500.pb.gz`
-- See [MAIA_SETUP.md](MAIA_SETUP.md) for detailed usage instructions
 
 ---
-
-## Quick Start
-
-### 0. Verify Engine Setup
-
-```bash
-# Check all engines are available
-python config/engines.py
-
-# Test Maia installation
-python -m src.play.sanity \
-  --lc0-path /usr/local/bin/lc0 \
-  --maia-weights weights/maia-1500.pb.gz
-```
-
-See [MAIA_SETUP.md](MAIA_SETUP.md) for complete Maia documentation.
 
 ### 1. Obtain Training Data
 
 **Lichess Open Database**: [https://database.lichess.org/](https://database.lichess.org/)
 
 1. Download PGN files (e.g., from Lichess Elite or monthly databases)
-2. Extract if compressed: `zstd -d lichess_db_standard_rated_2024-01.pgn.zst`
+2. Extract: `zstd -d lichess_db_standard_rated_2024-01.pgn.zst`
 3. Place in `data/raw/` directory (create if needed)
-4. **Important**: Add `data/raw/` to `.gitignore` (large files)
-
-**Licensing**: Lichess data is public domain (CC0). Cite source in publications.
 
 ### 2. Stream Sample Positions (~1M)
 
@@ -220,7 +108,7 @@ Phase distribution:
   Endgame:    250,000 ( 25.0%)
 ```
 
-### 3. (Optional) Generate Teacher Labels with Stockfish
+### 3. Generate Teacher Labels with Stockfish
 
 For higher-quality value targets, label positions with Stockfish:
 
@@ -232,8 +120,6 @@ python -m src.tools.teacher_label_stockfish \
   --depth 10 \
   --max-positions 100000
 ```
-
-**Note**: This is time-consuming (~1-2 hours for 100k positions). Skip for initial training.
 
 ### 4. Train Model
 
@@ -319,107 +205,6 @@ NUM_GAMES = 100  # Increase to 200-300 for final benchmarks
 
 ---
 
-## Project Components
-
-### Data Processing (`src/data/`)
-- **pgn_to_positions.py**: Extract positions from PGN with metadata (phase, outcome, move)
-- **dataset.py**: PyTorch Dataset for chess positions
-- **sampling.py**: Phase-stratified sampling and train/val/test split
-
-### Models (`src/model/`)
-- **nets.py**: MLPPolicy, CNNPolicyValue, MiniResNetPolicyValue
-- **loss.py**: Label-smoothing cross-entropy + MSE for policy + value
-
-### Search (`src/search/`)
-- **alphabeta.py**: Iterative deepening alpha-beta with policy ordering and value evaluation
-- **mcts_lite.py**: Lightweight MCTS with UCB and neural priors
-
-### Game Play (`src/play/`)
-- **engine_wrapper.py**: Unified interface for neural agent
-- **stockfish_wrapper.py**: Stockfish with skill level capping
-- **sunfish_wrapper.py**: Pure-Python Sunfish engine (baseline)
-- **match_runner.py**: Tournament runner with PGN logging and statistics
-
-### Utilities (`src/utils/`)
-- **encoding.py**: Board → tensor (12 × 8 × 8), move → index (4672-dim)
-- **metrics.py**: Elo calculation, Wilson CI, ACPL, policy accuracy
-- **plotting.py**: Visualization for EDA, training curves, match results
-- **seeds.py**: Reproducibility (Python, NumPy, PyTorch)
-
----
-
-## Running Maia (Lc0) Benchmarks
-
-Maia is a human-like chess engine based on Lc0 with specialized weights trained to mimic human play at specific rating levels.
-
-### Prerequisites
-```bash
-# Install Lc0
-brew install lc0  # macOS
-# Or download from https://github.com/LeelaChessZero/lc0/releases
-
-# Download Maia weights
-# Visit https://maiachess.com/ and download desired rating level
-# Example: maia1500.pb.gz for ~1500 Elo playing strength
-```
-
-### Sanity Check
-```bash
-python -m src.play.sanity \
-  --lc0-path /usr/local/bin/lc0 \
-  --maia-weights weights/maia1500.pb.gz
-```
-
-Expected output:
-```
-✓ Engine started: Maia-maia1500
-✓ Move from starting position is legal
-✓ Reply to e2e4 is legal
-```
-
-### Running Matches
-```bash
-python -m src.play.match_runner \
-  --opponent maia \
-  --games 100 \
-  --movetime 300 \
-  --maia-weights weights/maia1500.pb.gz \
-  --lc0-path /usr/local/bin/lc0 \
-  --threads 1
-```
-
-**Notes:**
-- External opening book only (engines don't use internal books)
-- UCI-only I/O for all engines
-- Single authoritative `chess.Board` as source of truth
-- Desync guard enabled by default (validates every engine move)
-
-## Benchmarking Details
-
-### Architecture
-- **Single Authoritative Board**: One python-chess Board maintains game state
-- **UCI-Only Protocol**: All engines communicate via UCI (no XBoard)
-- **External Opening Book**: 20 short opening lines; engines must disable internal books
-- **Desync Guard**: Validates every engine move before applying to board
-- **Per-Ply Logging**: Optional JSON logs for each half-move
-
-### Opening Book
-- 20 short opening lines for game variety
-- Alternates colors each game for fairness
-- UCI format only
-
-### Time Controls
-- Fixed time per move: 200-300 ms (recommended)
-- Or fixed depth: 2-3 ply
-- Equal budgets across all engines
-
-### Evaluation Metrics
-- **Score**: Wins + 0.5 × Draws
-- **Elo Difference**: With 95% confidence interval (Wilson method)
-- **ACPL**: Average centipawn loss (via Stockfish analysis)
-
----
-
 ## Reproducing Results
 
 1. Set random seed: `set_seed(42)` (already in notebooks)
@@ -461,75 +246,6 @@ python -m src.play.match_runner \
 - **License**: CC0 (Public Domain)
 - **Citation**: "Games from the Lichess Open Database (https://database.lichess.org/)"
 
-### Code
-This project is for educational purposes (course project). If you use or adapt this code, please cite:
-```
-Chess Deep Learning Agent
-University of Colorado Boulder
-Deep Learning Course Project, 2025
-```
-
-### Dependencies
-- **PyTorch**: BSD License
-- **python-chess**: GPL-3.0
-- **Stockfish**: GPL-3.0 (optional dependency)
-
----
-
-## Troubleshooting
-
-### Common Issues
-
-#### 1. MPS Not Available
-```python
-# Falls back to CPU automatically
-device = torch.device('mps' if torch.backends.mps.is_available() else 'cpu')
-```
-
-#### 2. Stockfish Not Found
-Update path in notebooks:
-```python
-STOCKFISH_PATH = '/path/to/stockfish'  # Update this
-```
-
-#### 3. Out of Memory
-Reduce batch size or model size:
-```python
-CONFIG['batch_size'] = 128  # Instead of 256
-CONFIG['channels'] = 32     # Instead of 64
-```
-
-#### 4. Slow Training
-- Ensure MPS is enabled on Mac
-- Reduce dataset size
-- Use fewer ResNet blocks
-
-#### 5. Import Errors
-```bash
-# Ensure src/ is in Python path
-export PYTHONPATH="${PYTHONPATH}:$(pwd)/src"
-```
-
----
-
-## Contact and Contribution
-
-**Author**: [Your Name]
-**Course**: Deep Learning, University of Colorado Boulder
-**Date**: 2025
-
-For questions or issues, please open an issue in the repository or contact the author.
-
----
-
-## Acknowledgments
-
-- **Lichess**: For providing open game data
-- **AlphaZero**: Inspiration for architecture and search
-- **Sunfish**: Simple baseline engine
-- **Stockfish**: Analysis and benchmarking
-- **PyTorch**: Deep learning framework
-- **python-chess**: Chess logic and PGN handling
 
 ---
 
