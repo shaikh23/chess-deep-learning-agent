@@ -1,7 +1,7 @@
 // Service Worker for Chess AI PWA
 // Enables offline functionality and faster loading
 
-const CACHE_NAME = 'chess-ai-v1';
+const CACHE_NAME = 'chess-ai-v2'; // Updated to force cache refresh
 const urlsToCache = [
     '/',
     '/index.html',
@@ -11,7 +11,7 @@ const urlsToCache = [
     '/manifest.json',
     '/icon-192.png',
     '/icon-512.png',
-    'https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.13.4/chess.min.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js', // Fixed version
     'https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css',
     'https://code.jquery.com/jquery-3.6.0.min.js',
     'https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js',
