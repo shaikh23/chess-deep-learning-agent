@@ -101,14 +101,24 @@
 
     <script src="chess-ai.js"></script>
     <script>
-        // Register service worker for PWA
+        // Unregister any existing service workers to clear cache issues
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('service-worker.js')
-                    .then(reg => console.log('Service Worker registered'))
-                    .catch(err => console.log('Service Worker registration failed:', err));
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for(let registration of registrations) {
+                    registration.unregister();
+                    console.log('Service Worker unregistered');
+                }
             });
         }
+
+        // Temporarily disabled - will re-enable once cache issues are resolved
+        // if ('serviceWorker' in navigator) {
+        //     window.addEventListener('load', () => {
+        //         navigator.serviceWorker.register('service-worker.js')
+        //             .then(reg => console.log('Service Worker registered'))
+        //             .catch(err => console.log('Service Worker registration failed:', err));
+        //     });
+        // }
     </script>
 </body>
 </html>
