@@ -1,0 +1,6 @@
+{
+  "buildCommand": "cd web && echo 'No build needed - static site'",
+  "outputDirectory": "web",
+  "cleanUrls": true,
+  "trailingSlash": false
+}
